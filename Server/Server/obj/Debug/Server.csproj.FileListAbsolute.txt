@@ -1,0 +1,11 @@
+C:\Users\msi\Desktop\cs408-202102\Server\Server\bin\Debug\Server.exe.config
+C:\Users\msi\Desktop\cs408-202102\Server\Server\bin\Debug\post-db.txt
+C:\Users\msi\Desktop\cs408-202102\Server\Server\bin\Debug\user-db.txt
+C:\Users\msi\Desktop\cs408-202102\Server\Server\bin\Debug\Server.exe
+C:\Users\msi\Desktop\cs408-202102\Server\Server\bin\Debug\Server.pdb
+C:\Users\msi\Desktop\cs408-202102\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
+C:\Users\msi\Desktop\cs408-202102\Server\Server\obj\Debug\Server.Form1.resources
+C:\Users\msi\Desktop\cs408-202102\Server\Server\obj\Debug\Server.Properties.Resources.resources
+C:\Users\msi\Desktop\cs408-202102\Server\Server\obj\Debug\Server.csproj.GenerateResource.Cache
+C:\Users\msi\Desktop\cs408-202102\Server\Server\obj\Debug\Server.exe
+C:\Users\msi\Desktop\cs408-202102\Server\Server\obj\Debug\Server.pdb

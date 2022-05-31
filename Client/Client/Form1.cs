@@ -14,12 +14,14 @@ namespace Client
 {
     public partial class Form1 : Form
     {
-
         bool terminating = false;
         bool connected = false;
         bool unsuccesfull = false;
         Socket clientSocket;
         string username;
+        List<string> friendList = new List<string>();
+        string selectedFriendToBeRemoved;
+        
 
         public Form1()
         {
@@ -103,6 +105,25 @@ namespace Client
                             unsuccesfull = true;
                         }
 
+                        //If the user tried to be added as a friend does not exists
+                        if (message.Contains("AinvalidFriendName"))
+                        {
+                            richTextBox.AppendText("Specified user name: " + message.Substring(message.IndexOf('*') + 1) + " is not a valid username.\n");
+                        }
+
+                        //If friend addition succeeded
+                        else if (message.Contains("AFriendAdded"))
+                        {
+                            richTextBox.AppendText(message.Substring(message.IndexOf('*') + 1) + " added as a friend.\n");
+                        }
+
+                        //If friend removal succeeded
+                        else if (message.Contains("AFriendRemoved"))
+                        {
+                            richTextBox.AppendText(message.Substring(message.IndexOf('*') + 1) + " removed from friends list.\n");
+                        }
+
+
                         //If the user is not approved by the server because he/she is already online
                         else if (message == "AalreadyOnline")
                         {
@@ -124,6 +145,17 @@ namespace Client
                             postTextBox.Enabled = true;
                             sendButton.Enabled = true;
                             allpostsButton.Enabled = true;
+                            friendsListBox.Enabled = true;
+                            if (selectedFriendToBeRemoved != null)
+                            {
+                                friendRemoveButton.Enabled = true;
+                            }
+                            friendUsernameTextBox.Enabled = true;
+                            addFriendButton.Enabled = true;
+                            postIDTextBox.Enabled = true;
+                            deleteButton.Enabled = true;
+                            myPostsButton.Enabled = true;
+                            friendPostsButton.Enabled = true;
                         }
                     }
 
@@ -202,6 +234,21 @@ namespace Client
                         }
                     }
 
+                    else if (response == ":")
+                    {
+                        if (message.Length != 1)
+                        {
+                            friendList = message.Substring(1).Split('*').ToList();
+                            friendsListBox.DataSource = friendList;
+                        }
+                        else
+                        {
+                            friendList.Clear();
+                            friendsListBox.DataSource = new List<string>();
+                            friendRemoveButton.Enabled = false;
+                        }
+                    }
+
 
                 }
                 catch
@@ -246,6 +293,15 @@ namespace Client
             postTextBox.Enabled = false;
             sendButton.Enabled = false;
             allpostsButton.Enabled = false;
+            friendsListBox.DataSource = new List<string>();
+            friendsListBox.Enabled = false;
+            friendRemoveButton.Enabled = false;
+            friendUsernameTextBox.Enabled = false;
+            addFriendButton.Enabled = false;
+            postIDTextBox.Enabled = false;
+            deleteButton.Enabled = false;
+            myPostsButton.Enabled = false;
+            friendPostsButton.Enabled = false;
 
             clientSocket.Disconnect(true);
             terminating = true;
@@ -291,6 +347,38 @@ namespace Client
             string req = "A";
             Byte[] buffer = Encoding.Default.GetBytes(req);
             clientSocket.Send(buffer);
+        }
+
+        private void friendsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectedFriendToBeRemoved = friendsListBox.SelectedItem.ToString();
+            if (selectedFriendToBeRemoved != null)
+            {
+                friendRemoveButton.Enabled = true;
+            }
+        }
+
+        private void friendRemoveButton_Click(object sender, EventArgs e)
+        {
+            if (selectedFriendToBeRemoved != null)
+            {
+                string removalInfo = "FR:" + username + "*" + selectedFriendToBeRemoved;
+                Byte[] removalBuffer = Encoding.Default.GetBytes(removalInfo);
+                clientSocket.Send(removalBuffer);
+            }
+        }
+
+        private void addFriendButton_Click(object sender, EventArgs e)
+        {
+            string friendToBeAdded = friendUsernameTextBox.Text;
+
+            if (friendToBeAdded.Length != 0)
+            {
+                string additionInfo = "FA:" + username + "*" + friendToBeAdded;
+                Byte[] additionBuffer = Encoding.Default.GetBytes(additionInfo);
+                clientSocket.Send(additionBuffer);
+                friendUsernameTextBox.Text = "";
+            }
         }
     }
 }

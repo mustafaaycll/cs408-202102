@@ -40,6 +40,40 @@ namespace Server
             Environment.Exit(0);
         }
 
+        private string getFriendsAsString(IEnumerable<string> friendshipLines, string username)
+        {
+            string friends = "";
+
+
+            foreach (string item in friendshipLines)
+            {
+                string indicator = item.Substring(0, item.IndexOf(":"));
+                if (indicator == username)
+                {
+                    friends = item.Substring(item.IndexOf(":"));
+                    break;
+                }
+            }
+
+            return friends;
+        }
+
+        private bool validateUser(string friend)
+        {
+            var users = File.ReadLines(@"../../user-db.txt");
+
+            //Checks if the user is in the user database
+            foreach (string line in users)
+            {
+                if (friend == line)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
 
 
         //Listen Button *********************************************************
@@ -162,8 +196,13 @@ namespace Server
                             string cnnctMsg = " has connected.\n";
                             richTextBox.AppendText(cnnctMsg);
 
+
+                            var friends = getFriendsAsString(File.ReadLines(@"../../friendships-db.txt"), username);
+                            Byte[] friendsBuffer = Encoding.Default.GetBytes(friends);
+                            
                             //Sends approved message to client
                             thisClient.Send(buffer2);
+                            thisClient.Send(friendsBuffer);
 
                             //Adds the user into online users
                             connectedClients.Add(username);
@@ -278,6 +317,119 @@ namespace Server
                             string toBeSent = "P00";
                             Byte[] buffer7 = Encoding.Default.GetBytes(toBeSent);
                             thisClient.Send(buffer7);
+                        }
+                    }
+                    else if (request == "F")
+                    {
+                        string remainingInfo = message.Substring(0, message.IndexOf(":"));
+                        List<string> involvedParties = message.Substring(message.IndexOf(":") + 1).Split('*').ToList();
+                        username = involvedParties[0];
+                        string friend = involvedParties[1];
+
+                        var friendsDB = File.ReadLines(@"../../friendships-db.txt").ToList();
+
+                        if(!validateUser(friend))
+                        {
+                            Byte[] invalidFriendsBuffer = Encoding.Default.GetBytes("AinvalidFriendName*"+friend);
+                            thisClient.Send(invalidFriendsBuffer);
+                        }
+                        else if (remainingInfo == "FA")
+                        {
+                            List<string> newFriendsDB = new List<string>();
+                            for (int i = 0; i < friendsDB.Count(); i++)
+                            {
+                                string line = friendsDB[i];
+                                List<string> splitLine = line.Split(':').ToList();
+                                splitLine.Remove("");
+
+                                if (splitLine[0] == username)
+                                {
+                                    string formattedLine = username + ":";
+                                    if (splitLine.Count() == 2)
+                                    {
+                                        List<string> splitFriends = splitLine[1].Split('*').ToList();
+                                        if (!splitFriends.Contains(friend))
+                                        {
+                                            splitFriends.Add(friend);
+                                        }
+                                        string reJoinedFriends = String.Join("*", splitFriends.ToArray());
+                                        formattedLine += reJoinedFriends;
+                                    }
+                                    else
+                                    {
+                                        formattedLine += friend;
+                                    }
+                                    newFriendsDB.Add(formattedLine);
+                                }
+                                else if (splitLine[0] == friend)
+                                {
+                                    string formattedLine = friend + ":";
+                                    if (splitLine.Count() == 2)
+                                    {
+                                        List<string> splitFriends = splitLine[1].Split('*').ToList();
+                                        if (!splitFriends.Contains(username))
+                                        {
+                                            splitFriends.Add(username);
+                                        }
+                                        string reJoinedFriends = String.Join("*", splitFriends.ToArray());
+                                        formattedLine += reJoinedFriends;
+                                    }
+                                    else
+                                    {
+                                        formattedLine += username;
+                                    }
+                                    newFriendsDB.Add(formattedLine);
+                                }
+                                else
+                                {
+                                    newFriendsDB.Add(line);
+                                }
+                            }
+                            File.WriteAllText(@"../../friendships-db.txt", String.Join("\n", newFriendsDB.ToArray()));
+                            var friends = getFriendsAsString(File.ReadLines(@"../../friendships-db.txt"), username);
+                            Byte[] friendsBuffer = Encoding.Default.GetBytes(friends);
+                            thisClient.Send(friendsBuffer);
+                            Byte[] FriendAddedBuffer = Encoding.Default.GetBytes("AFriendAdded*" + friend);
+                            thisClient.Send(FriendAddedBuffer);
+                        }
+                        else if (remainingInfo == "FR")
+                        {
+                            List<string> newFriendsDB = new List<string>();
+                            for (int i = 0; i < friendsDB.Count(); i++)
+                            {
+                                string line = friendsDB[i];
+                                List<string> splitLine = line.Split(':').ToList();
+                                splitLine.Remove("");
+
+                                if (splitLine[0] == username)
+                                {
+                                    string formattedLine = username + ":";
+                                    List<string> splitFriends = splitLine[1].Split('*').ToList();
+                                    splitFriends.Remove(friend);
+                                    string reJoinedFriends = String.Join("*", splitFriends.ToArray());
+                                    formattedLine += reJoinedFriends;
+                                    newFriendsDB.Add(formattedLine);
+                                }
+                                else if (splitLine[0] == friend)
+                                {
+                                    string formattedLine = friend + ":";
+                                    List<string> splitFriends = splitLine[1].Split('*').ToList();
+                                    splitFriends.Remove(username);
+                                    string reJoinedFriends = String.Join("*", splitFriends.ToArray());
+                                    formattedLine += reJoinedFriends;
+                                    newFriendsDB.Add(formattedLine);
+                                }
+                                else
+                                {
+                                    newFriendsDB.Add(line);
+                                }
+                            }
+                            File.WriteAllText(@"../../friendships-db.txt", String.Join("\n", newFriendsDB.ToArray()));
+                            var friends = getFriendsAsString(File.ReadLines(@"../../friendships-db.txt"), username);
+                            Byte[] friendsBuffer = Encoding.Default.GetBytes(friends);
+                            thisClient.Send(friendsBuffer);
+                            Byte[] FriendRemovedBuffer = Encoding.Default.GetBytes("AFriendRemoved*" + friend);
+                            thisClient.Send(FriendRemovedBuffer);
                         }
                     }
                 }
