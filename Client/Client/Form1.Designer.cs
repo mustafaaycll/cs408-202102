@@ -86,7 +86,7 @@
             // ipTextBox
             // 
             this.ipTextBox.Location = new System.Drawing.Point(71, 27);
-            this.ipTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ipTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.ipTextBox.Name = "ipTextBox";
             this.ipTextBox.Size = new System.Drawing.Size(152, 20);
             this.ipTextBox.TabIndex = 3;
@@ -94,7 +94,7 @@
             // portTextBox
             // 
             this.portTextBox.Location = new System.Drawing.Point(71, 51);
-            this.portTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.portTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.portTextBox.Name = "portTextBox";
             this.portTextBox.Size = new System.Drawing.Size(152, 20);
             this.portTextBox.TabIndex = 4;
@@ -102,7 +102,7 @@
             // usernameTextBox
             // 
             this.usernameTextBox.Location = new System.Drawing.Point(71, 75);
-            this.usernameTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.usernameTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.usernameTextBox.Name = "usernameTextBox";
             this.usernameTextBox.Size = new System.Drawing.Size(152, 20);
             this.usernameTextBox.TabIndex = 5;
@@ -110,7 +110,7 @@
             // connectButton
             // 
             this.connectButton.Location = new System.Drawing.Point(149, 99);
-            this.connectButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.connectButton.Margin = new System.Windows.Forms.Padding(2);
             this.connectButton.Name = "connectButton";
             this.connectButton.Size = new System.Drawing.Size(74, 32);
             this.connectButton.TabIndex = 6;
@@ -122,7 +122,7 @@
             // 
             this.disconnectButton.Enabled = false;
             this.disconnectButton.Location = new System.Drawing.Point(71, 99);
-            this.disconnectButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.disconnectButton.Margin = new System.Windows.Forms.Padding(2);
             this.disconnectButton.Name = "disconnectButton";
             this.disconnectButton.Size = new System.Drawing.Size(74, 32);
             this.disconnectButton.TabIndex = 7;
@@ -133,7 +133,7 @@
             // richTextBox
             // 
             this.richTextBox.Location = new System.Drawing.Point(282, 27);
-            this.richTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.richTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.richTextBox.Name = "richTextBox";
             this.richTextBox.ReadOnly = true;
             this.richTextBox.Size = new System.Drawing.Size(252, 381);
@@ -154,7 +154,7 @@
             // 
             this.postTextBox.Enabled = false;
             this.postTextBox.Location = new System.Drawing.Point(314, 415);
-            this.postTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.postTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.postTextBox.Name = "postTextBox";
             this.postTextBox.Size = new System.Drawing.Size(144, 20);
             this.postTextBox.TabIndex = 10;
@@ -163,7 +163,7 @@
             // 
             this.sendButton.Enabled = false;
             this.sendButton.Location = new System.Drawing.Point(462, 412);
-            this.sendButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.sendButton.Margin = new System.Windows.Forms.Padding(2);
             this.sendButton.Name = "sendButton";
             this.sendButton.Size = new System.Drawing.Size(72, 25);
             this.sendButton.TabIndex = 11;
@@ -175,7 +175,7 @@
             // 
             this.allpostsButton.Enabled = false;
             this.allpostsButton.Location = new System.Drawing.Point(538, 24);
-            this.allpostsButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.allpostsButton.Margin = new System.Windows.Forms.Padding(2);
             this.allpostsButton.Name = "allpostsButton";
             this.allpostsButton.Size = new System.Drawing.Size(104, 25);
             this.allpostsButton.TabIndex = 12;
@@ -246,6 +246,7 @@
             this.myPostsButton.TabIndex = 18;
             this.myPostsButton.Text = "My Posts";
             this.myPostsButton.UseVisualStyleBackColor = true;
+            this.myPostsButton.Click += new System.EventHandler(this.myPostsButton_Click);
             // 
             // friendPostsButton
             // 
@@ -257,6 +258,7 @@
             this.friendPostsButton.TabIndex = 19;
             this.friendPostsButton.Text = "Friend\'s Posts";
             this.friendPostsButton.UseVisualStyleBackColor = true;
+            this.friendPostsButton.Click += new System.EventHandler(this.friendPostsButton_Click);
             // 
             // deleteButton
             // 
@@ -316,7 +318,7 @@
             this.Controls.Add(this.usernameLabel);
             this.Controls.Add(this.portLabel);
             this.Controls.Add(this.ipLabel);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);

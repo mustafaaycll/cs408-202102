@@ -177,7 +177,7 @@ namespace Client
 
                                 //Prints the post on the rich text box
                                 richTextBox.AppendText("\n");
-                                richTextBox.AppendText("Showing all posts from clients:\n");
+                                richTextBox.AppendText("Showing posts:\n");
                                 richTextBox.AppendText("\n");
                                 richTextBox.AppendText("Username:");
                                 richTextBox.AppendText(message.Substring(3, message.IndexOf("---") - 3));
@@ -381,6 +381,21 @@ namespace Client
                 clientSocket.Send(additionBuffer);
                 friendUsernameTextBox.Text = "";
             }
+        }
+
+        private void myPostsButton_Click(object sender, EventArgs e)
+        {
+            //Send "A:{username}" to server to request own posts
+            string req = "A:"+username;
+            Byte[] buffer = Encoding.Default.GetBytes(req);
+            clientSocket.Send(buffer);
+        }
+
+        private void friendPostsButton_Click(object sender, EventArgs e)
+        {
+            string req = "A:" + String.Join("*", friendList);
+            Byte[] buffer = Encoding.Default.GetBytes(req);
+            clientSocket.Send(buffer);
         }
     }
 }

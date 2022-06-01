@@ -273,7 +273,7 @@ namespace Server
                     }
 
                     //All posts request
-                    else if(request == "A")
+                    else if(request == "A" && message.Length == 1)
                     {
                         
                         //Reads posts database
@@ -313,6 +313,49 @@ namespace Server
                             }
                         }
                         if(postCount == 0)
+                        {
+                            string toBeSent = "P00";
+                            Byte[] buffer7 = Encoding.Default.GetBytes(toBeSent);
+                            thisClient.Send(buffer7);
+                        }
+                    }
+                    else if (request == "A" && message.Length != 1)
+                    {
+                        List<string> usernames = message.Substring(message.IndexOf(':') + 1).Split('*').ToList();
+                        Console.WriteLine(usernames);
+                        var posts = File.ReadLines(@"../../post-db.txt");
+
+                        int postCount = 0;
+
+                        richTextBox.AppendText("Showed all posts from " + String.Join(", ", usernames) + " to " + username + "\n");
+                        foreach (string post in posts)
+                        {
+
+                            //If the owner of the post is not the user who requested all posts
+                            //Post prefix notation: P X X
+                            //                      | | |-> 0 if there are no posts in the database to show that user, 1 if there is at least one post that can be shown
+                            //                      | |->0 if this is the first post to be sent in this request
+                            //                      |->Indicates that the response is about all posts request
+
+                            if (usernames.Contains(post.Substring(0, post.IndexOf("---"))))
+                            {
+                                if (postCount == 0)
+                                {
+                                    string toBeSent = "P01" + post;
+                                    Byte[] buffer6 = Encoding.Default.GetBytes(toBeSent);
+                                    thisClient.Send(buffer6);
+                                    postCount++;
+                                }
+                                else
+                                {
+                                    string toBeSent = "P11" + post;
+                                    Byte[] buffer8 = Encoding.Default.GetBytes(toBeSent);
+                                    thisClient.Send(buffer8);
+                                    postCount++;
+                                }
+                            }
+                        }
+                        if (postCount == 0)
                         {
                             string toBeSent = "P00";
                             Byte[] buffer7 = Encoding.Default.GetBytes(toBeSent);
