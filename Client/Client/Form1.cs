@@ -155,7 +155,7 @@ namespace Client
                             postIDTextBox.Enabled = true;
                             deleteButton.Enabled = true;
                             myPostsButton.Enabled = true;
-                            friendPostsButton.Enabled = true;
+                            friendPostsButton.Enabled = false;
                         }
                     }
 
@@ -240,12 +240,14 @@ namespace Client
                         {
                             friendList = message.Substring(1).Split('*').ToList();
                             friendsListBox.DataSource = friendList;
+                            friendPostsButton.Enabled = true;
                         }
                         else
                         {
                             friendList.Clear();
                             friendsListBox.DataSource = new List<string>();
                             friendRemoveButton.Enabled = false;
+                            friendPostsButton.Enabled = false;
                         }
                     }
 
