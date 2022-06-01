@@ -1,6 +1,6 @@
-aliatay:
-fatihterim:
-metegazoz:
+aliatay:metegazoz
+fatihterim:metegazoz
+metegazoz:aliatay*fatihterim
 fahrettinkoca:
 cembaydi:
 edaerdem:
