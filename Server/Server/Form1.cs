@@ -240,6 +240,63 @@ namespace Server
                         }
                     }
 
+                    else if (request == "D")
+                    {
+                        username = message.Substring(1, message.IndexOf('*')-1);
+                        string ID = message.Substring(message.IndexOf('*') + 1);
+
+                        var posts = File.ReadLines(@"../../post-db.txt").ToList();
+                        string relevantLine = "";
+                        int indexToBeRemoved = -1;
+
+                        for (int i = 0; i < posts.Count(); i++)
+                        {
+                            string tempLine = posts[i];
+                            string tempUsername = tempLine.Substring(0, tempLine.IndexOf('-'));
+                            string tempID = tempLine.Substring(tempLine.IndexOf('-') + 3, tempLine.IndexOf('+') - (tempLine.IndexOf('-') + 3));
+                            if (tempUsername == username && tempID == ID){
+                                relevantLine = tempLine;
+                            }
+                            if (tempID == ID)
+                            {
+                                indexToBeRemoved = i;
+                                break;
+                            }
+
+                        }
+                        richTextBox.AppendText("relevant line: " + relevantLine + " *** " + indexToBeRemoved.ToString());
+                        if (relevantLine == "" && indexToBeRemoved == -1)
+                        {
+                            //no such entry with given ID
+                            richTextBox.AppendText(username + " tried to delete non existing post with ID: " + ID + "\n");
+                            string response = "DE" + ID;
+                            Byte[] deletionBuffer = Encoding.Default.GetBytes(response);
+                            thisClient.Send(deletionBuffer);
+
+                        }
+                        else if (relevantLine == "" && indexToBeRemoved > -1)
+                        {
+                            //entry exists but not owned by user
+                            richTextBox.AppendText(username + " could not delete the post with ID: " + ID + " since it is not owned by " + username + "\n");
+                            string response = "DP" + ID;
+                            Byte[] deletionBuffer = Encoding.Default.GetBytes(response);
+                            thisClient.Send(deletionBuffer);
+                        }
+                        else if (relevantLine != "" && indexToBeRemoved > -1)
+                        {
+                            //entry exists and user can delete it
+                            richTextBox.AppendText("12345");
+                            posts.RemoveAt(indexToBeRemoved);
+                            File.WriteAllText(@"../../post-db.txt", String.Join("\n", posts.ToArray()));
+                            richTextBox.AppendText(username + " deleted the post with ID: " + ID + "\n");
+
+                            string response = "DC" + ID;
+                            Byte[] deletionBuffer = Encoding.Default.GetBytes(response);
+                            thisClient.Send(deletionBuffer);
+
+                        }
+                    }
+
                     //New post request
                     else if(request == "S")
                     {

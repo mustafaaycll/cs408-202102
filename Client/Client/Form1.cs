@@ -160,6 +160,23 @@ namespace Client
                         }
                     }
 
+                    else if (response == "D")
+                    {
+                        string ID = message.Substring(2);
+                        if(message.Substring(1, 1) == "E")
+                        {
+                            richTextBox.AppendText("No post with ID: " + ID + " exists\n");
+                        }
+                        if (message.Substring(1, 1) == "P")
+                        {
+                            richTextBox.AppendText("Post with ID: " + ID + " is not owned by you\n");
+                        }
+                        if (message.Substring(1, 1) == "C")
+                        {
+                            richTextBox.AppendText("Post with ID: " + ID + " is deleted successfully\n");
+                        }
+                    }
+
                     //All posts response
                     else if(response == "P")
                     {
@@ -407,9 +424,15 @@ namespace Client
             {
                 int ID = 0;
                 int.TryParse(postIDTextBox.Text, out ID);
-                if (ID == 0)
+                if (ID <= 0)
                 {
                     richTextBox.AppendText("Please provide a valid ID\n");
+                }
+                else
+                {
+                    string deleterequest = "D" + username + "*" + ID.ToString();
+                    Byte[] deletebuffer = Encoding.Default.GetBytes(deleterequest);
+                    clientSocket.Send(deletebuffer);
                 }
             }
             else
