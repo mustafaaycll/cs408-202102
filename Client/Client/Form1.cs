@@ -400,5 +400,22 @@ namespace Client
             Byte[] buffer = Encoding.Default.GetBytes(req);
             clientSocket.Send(buffer);
         }
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            if (postIDTextBox.Text != "")
+            {
+                int ID = 0;
+                int.TryParse(postIDTextBox.Text, out ID);
+                if (ID == 0)
+                {
+                    richTextBox.AppendText("Please provide a valid ID\n");
+                }
+            }
+            else
+            {
+                richTextBox.AppendText("Please provide an ID to delete\n");
+            }
+        }
     }
 }
