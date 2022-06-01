@@ -249,21 +249,21 @@ namespace Server
                         richTextBox.AppendText(" \n");
                         
                         //Reads the post database
-                        var lines4 = File.ReadLines(@"../../post-db.txt");
-                        
-                        //Counts the number of posts in order to give the new post an ID
-                        int AllPostsCount = 0;
-                        foreach(string allPosts in lines4)
+                        var posts = File.ReadLines(@"../../post-db.txt");
+
+                        //Get the last ID used to send a message
+                        int lastPostID = 0;
+                        if (posts.Count() != 0)
                         {
-                            AllPostsCount++;
+                            string lastLine = posts.ElementAt(posts.Count() - 1);
+                            lastPostID = int.Parse(lastLine.Substring(lastLine.IndexOf('-') + 3, lastLine.IndexOf('+') - (lastLine.IndexOf('-') + 3)));
                         }
-                        AllPostsCount++;
 
                         //Gets the time of the post
                         string currentTime = DateTime.Now.ToString("yyyyMMddHHmmss");
 
                         //Creates the new post with the following information: username, ID, content, time
-                        string newPost = username + "---" + AllPostsCount.ToString() + "+++" + message.Substring(1, message.Length - 1) + "***" + currentTime;
+                        string newPost = username + "---" + (lastPostID+1).ToString() + "+++" + message.Substring(1, message.Length - 1) + "***" + currentTime;
                         
                         //Writes the new post5 into post-db.txt
                         using (StreamWriter file = new StreamWriter(@"../../post-db.txt", append: true))
