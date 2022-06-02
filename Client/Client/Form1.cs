@@ -132,6 +132,12 @@ namespace Client
                             unsuccesfull = true;
                         }
 
+                        else if(message == "Aownusername*")
+                        {
+                            richTextBox.AppendText("You can not send a request to yourself\n");
+                            unsuccesfull = true;
+                        }
+
                         //If the user is approved by the server
                         else if (message == "Aapproved")
                         {
@@ -158,6 +164,11 @@ namespace Client
                             myPostsButton.Enabled = true;
                             friendPostsButton.Enabled = false;
                         }
+                    }
+
+                    else if(response == "R")
+                    {
+
                     }
 
                     else if (response == "D")
@@ -254,6 +265,23 @@ namespace Client
                     }
 
                     else if (response == ":")
+                    {
+                        if (message.Length != 1)
+                        {
+                            friendList = message.Substring(1).Split('*').ToList();
+                            friendsListBox.DataSource = friendList;
+                            friendPostsButton.Enabled = true;
+                        }
+                        else
+                        {
+                            friendList.Clear();
+                            friendsListBox.DataSource = new List<string>();
+                            friendRemoveButton.Enabled = false;
+                            friendPostsButton.Enabled = false;
+                        }
+                    }
+
+                    else if (response == "R")
                     {
                         if (message.Length != 1)
                         {

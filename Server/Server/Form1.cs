@@ -22,6 +22,7 @@ namespace Server
         List<Socket> clientSockets = new List<Socket>();
         bool terminating = false;
         bool listening = false;
+        List<bool> refreshFriends;
 
         //List to keep online users
         List<string> connectedClients = new List<string>();
@@ -115,7 +116,8 @@ namespace Server
                     clientSockets.Add(newClient);
 
                     //Directly accept all clients and create their recieve threads
-                    Thread receiveThread = new Thread(() => Receive(newClient));
+                    refreshFriends.Add(false);
+                    Thread receiveThread = new Thread(() => Receive(newClient, refreshFriends.Count - 1));
                     receiveThread.Start();
                 }
                 catch
@@ -135,7 +137,7 @@ namespace Server
 
 
         //Recieve from clients***************************************
-        private void Receive(Socket thisClient)
+        private void Receive(Socket thisClient, int idx)
         {
             bool connected = true;
             string username = "";
@@ -154,6 +156,14 @@ namespace Server
 
                     //First char of the message is the type of the request
                     string request = message.Substring(0, 1);
+
+                    if (refreshFriends[idx])
+                    {
+                        var friends = "R";
+                        friends += getFriendsAsString(File.ReadLines(@"../../friendships-db.txt"), username);
+                        Byte[] friendsBuffer = Encoding.Default.GetBytes(friends);
+                        thisClient.Send(friendsBuffer);
+                    }
 
                     //Login request
                     if(request == "U")
@@ -432,6 +442,12 @@ namespace Server
                         {
                             Byte[] invalidFriendsBuffer = Encoding.Default.GetBytes("AinvalidFriendName*"+friend);
                             thisClient.Send(invalidFriendsBuffer);
+                            richTextBox.AppendText("User does not exist\n");
+                        }
+                        else if(friend == username){
+                            Byte[] invalidFriendsBuffer = Encoding.Default.GetBytes("Aownusername*" + friend);
+                            thisClient.Send(invalidFriendsBuffer);
+                            richTextBox.AppendText("You can not send a request to yourself\n");
                         }
                         else if (remainingInfo == "FA")
                         {
@@ -491,6 +507,10 @@ namespace Server
                             thisClient.Send(friendsBuffer);
                             Byte[] FriendAddedBuffer = Encoding.Default.GetBytes("AFriendAdded*" + friend);
                             thisClient.Send(FriendAddedBuffer);
+                            richTextBox.AppendText(username + " has added " + friend + " as a friend\n");
+                            for(int i = 0; i < refreshFriends.Count; i++){
+                                refreshFriends[i] = true;
+                            }
                         }
                         else if (remainingInfo == "FR")
                         {
@@ -530,6 +550,11 @@ namespace Server
                             thisClient.Send(friendsBuffer);
                             Byte[] FriendRemovedBuffer = Encoding.Default.GetBytes("AFriendRemoved*" + friend);
                             thisClient.Send(FriendRemovedBuffer);
+                            richTextBox.AppendText(username + " has removed " + friend + " from his/her friends\n");
+                            for (int i = 0; i < refreshFriends.Count; i++)
+                            {
+                                refreshFriends[i] = true;
+                            }
                         }
                     }
                 }
